@@ -12,6 +12,18 @@ public class Sudoku {
       this.row = row;
       this.col = col;
     }
+
+    void setSudokuBorder() {
+      if ((row == 2 && col == 2) || (row == 2 && col == 5) || (row == 5 && col == 2) || (row == 5 && col == 5)) {
+        this.setBorder(BorderFactory.createMatteBorder(1, 1, 5, 5, Color.black));
+      } else if (row == 2 || row == 5) {
+        this.setBorder(BorderFactory.createMatteBorder(1, 1, 5, 1, Color.black));
+      } else if (col == 2 || col == 5) {
+        this.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 5, Color.black));
+      } else {
+        this.setBorder(BorderFactory.createLineBorder(Color.black));
+      }
+    }
   }
 
   int boardWidth = 600;
@@ -45,6 +57,10 @@ public class Sudoku {
   JLabel textLabel = new JLabel();
   JPanel textPanel = new JPanel();
   JPanel boardPanel = new JPanel();
+  JPanel buttonsPanel = new JPanel();
+
+  JButton numSelected = null;
+  int errors = 0;
 
   public Sudoku() {
 
@@ -64,6 +80,10 @@ public class Sudoku {
     boardPanel.setLayout(new GridLayout(9, 9));
     setupTiles();
     frame.add(boardPanel, BorderLayout.CENTER);
+
+    buttonsPanel.setLayout(new GridLayout(1, 9));
+    setupButtons();
+    frame.add(buttonsPanel, BorderLayout.SOUTH);
 
     frame.setVisible(true);
   }
@@ -87,9 +107,55 @@ public class Sudoku {
           tile.setEnabled(true);
         }
 
+        tile.setSudokuBorder();
         tile.setFocusable(false);
         boardPanel.add(tile);
+
+        tile.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            Tile tile = (Tile) e.getSource();
+            int r = tile.row;
+            int c = tile.col;
+
+            if (numSelected == null)
+              return;
+
+            if (tile.getText() != "")
+              return;
+
+            String numSelectedText = numSelected.getText();
+            String tileSolution = String.valueOf(solution[r].charAt(c));
+            if (tileSolution.equals(numSelectedText)) {
+              tile.setText(numSelectedText);
+            } else {
+              errors += 1;
+              textLabel.setText("Sudoku: " + String.valueOf(errors));
+            }
+
+          }
+        });
       }
+    }
+  }
+
+  void setupButtons() {
+    for (int i = 1; i <= 9; i++) {
+      JButton button = new JButton(String.valueOf(i));
+      button.setFont(new Font("Arial", Font.BOLD, 20));
+      button.setFocusable(false);
+      button.setBackground(Color.WHITE);
+      buttonsPanel.add(button);
+
+      button.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          JButton button = (JButton) e.getSource();
+          if (numSelected != null) {
+            numSelected.setBackground(Color.WHITE);
+          }
+          numSelected = button;
+          numSelected.setBackground(Color.LIGHT_GRAY);
+        }
+      });
     }
   }
 }
