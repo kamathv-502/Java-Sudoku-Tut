@@ -47,7 +47,7 @@ public class Sudoku {
   JPanel boardPanel = new JPanel();
 
   public Sudoku() {
-    frame.setVisible(true);
+
     frame.setSize(boardWidth, boardHeight);
     frame.setResizable(false);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -63,19 +63,31 @@ public class Sudoku {
 
     boardPanel.setLayout(new GridLayout(9, 9));
     setupTiles();
+    frame.add(boardPanel, BorderLayout.CENTER);
+
+    frame.setVisible(true);
   }
 
   void setupTiles() {
     for (int row = 0; row < 9; row++) {
       for (int col = 0; col < 9; col++) {
         Tile tile = new Tile(row, col);
-        tile.setFont(new Font("Arial", Font.BOLD, 30));
-        tile.setFocusPainted(false);
-        tile.setMargin(new Insets(0, 0, 0, 0));
-        tile.setBackground(Color.WHITE);
-        tile.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        tile.setOpaque(true);
-        tile.setText(puzzle[row].charAt(col) == '-' ? "" : String.valueOf(puzzle[row].charAt(col)));
+        char tileChar = puzzle[row].charAt(col);
+        if (tileChar != '-') {
+          tile.setFont(new Font("Arial", Font.BOLD, 20));
+          tile.setBackground(Color.LIGHT_GRAY);
+
+          tile.setText(String.valueOf(tileChar));
+          tile.setEnabled(false);
+        } else {
+          tile.setFont(new Font("Arial", Font.PLAIN, 20));
+          tile.setBackground(Color.WHITE);
+
+          tile.setText("");
+          tile.setEnabled(true);
+        }
+
+        tile.setFocusable(false);
         boardPanel.add(tile);
       }
     }
